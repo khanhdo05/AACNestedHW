@@ -1,6 +1,7 @@
 import edu.grinnell.csc207.util.AssociativeArray;
 import edu.grinnell.csc207.util.KeyNotFoundException;
 import edu.grinnell.csc207.util.NullKeyException;
+import java.util.NoSuchElementException;
 
 /**
  * Represents the mappings for a single category of items that should be displayed
@@ -30,16 +31,19 @@ public class AACCategory implements AACPage {
 	} // AACCategory(String)
 
 	/**
-	 * Adds the image location, text pairing to the category
+	 * Adds the image location, text pairing to the category If the image location is null, it doesn't
+	 * do anything
 	 * 
 	 * @param imageLoc the location of the image
 	 * @param text the text that image should speak
-	 *
-	 * @throws NullKeyException if the image location is null
 	 */
 	@Override
-	public void addItem(String imageLoc, String text) throws NullKeyException {
-		this.items.set(imageLoc, text);
+	public void addItem(String imageLoc, String text) {
+		try {
+			this.items.set(imageLoc, text);
+		} catch (NullKeyException e) {
+			// Do nothing
+		} // try/catch
 	} // addItem(String, String)
 
 	/**
@@ -67,11 +71,15 @@ public class AACCategory implements AACPage {
 	 * 
 	 * @param imageLoc the location of the image
 	 * @return the text associated with the image
-	 * @throws KeyNotFoundException if the image provided is not in the current category
+	 * @throws NoSuchElementException if the image provided is not in the current category
 	 */
 	@Override
-	public String select(String imageLoc) throws KeyNotFoundException {
-		return this.items.get(imageLoc);
+	public String select(String imageLoc) throws NoSuchElementException {
+		try {
+			return this.items.get(imageLoc);
+		} catch (KeyNotFoundException e) {
+			throw new NoSuchElementException("The image provided is not in the current category");
+		} // try/catch
 	} // select(String)
 
 	/**

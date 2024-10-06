@@ -1,5 +1,5 @@
-import edu.grinnell.csc207.util.KeyNotFoundException;
 import edu.grinnell.csc207.util.NullKeyException;
+import java.util.NoSuchElementException;
 
 /**
  * This interface represents a set of information that would be displayed together on an AAC.
@@ -41,9 +41,9 @@ public interface AACPage {
 	 * @return if there is text to be spoken, it returns that information, otherwise it returns the
 	 *         empty string
 	 *
-	 * @throws KeyNotFoundException if the image provided is not in the current category
+	 * @throws NoSuchElementException if the image provided is not in the current category
 	 */
-	public String select(String imageLoc) throws KeyNotFoundException;
+	public String select(String imageLoc) throws NoSuchElementException;
 
 	/**
 	 * Determines if the provided image is in the set of images that can be displayed and false
