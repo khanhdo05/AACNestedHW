@@ -25,8 +25,7 @@ public class TestAACMappings {
   // +-----------+
 
   /** Our standard configureation file. */
-  static final String TEST_CONFIG =
-      """
+  static final String TEST_CONFIG = """
       one fruit
       >a apple
       >b banana
@@ -81,8 +80,7 @@ public class TestAACMappings {
   /**
    * Set up a new temporary config file.
    *
-   * @param contents
-   *   The data that belong in the file.
+   * @param contents The data that belong in the file.
    *
    * @return the path to the file.
    *
@@ -104,11 +102,10 @@ public class TestAACMappings {
   // +-------+
 
   /**
-   * Can we create a new AACMappings with an empty description file?
-   * This test can't fail, but it can exit with an error.
+   * Can we create a new AACMappings with an empty description file? This test can't fail, but it
+   * can exit with an error.
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testCreateEmpty() throws IOException {
@@ -118,11 +115,10 @@ public class TestAACMappings {
   } // testCreateEmpty()
 
   /**
-   * Can we create a new AACMappings that only has top-level descriptions?
-   * This test can't fail, but it can exit with an error.
+   * Can we create a new AACMappings that only has top-level descriptions? This test can't fail, but
+   * it can exit with an error.
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testCreateTopLevel() throws IOException {
@@ -132,13 +128,12 @@ public class TestAACMappings {
   } // testCreateTopLevel()
 
   /**
-   * Can we create a new AACMappings that has the normal format?
-   * This test can't fail, but it can exit with an error.
+   * Can we create a new AACMappings that has the normal format? This test can't fail, but it can
+   * exit with an error.
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
-  @Test 
+  @Test
   public void testCreateNormal() throws IOException {
     String fName = configFile(TEST_CONFIG);
     AACMappings mappings = new AACMappings(fName);
@@ -148,8 +143,7 @@ public class TestAACMappings {
   /**
    * Do we get the correct top-level domain?
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testTopLevelCategory() throws IOException {
@@ -158,26 +152,22 @@ public class TestAACMappings {
     mappings = new AACMappings(configFile(""));
     assertEquals("", mappings.getCategory(), "top level, empty config");
 
-    mappings = 
-        new AACMappings(configFile("one food\ntwo clothes\nthree misc"));
+    mappings = new AACMappings(configFile("one food\ntwo clothes\nthree misc"));
     assertEquals("", mappings.getCategory(), "top level, empty categories");
 
-    mappings = 
-        new AACMappings(configFile(TEST_CONFIG));
+    mappings = new AACMappings(configFile(TEST_CONFIG));
     assertEquals("", mappings.getCategory(), "top level, test config");
   } // testTopLevelCategory()
 
   /**
-   * Do we get the correct category after switching categories? Also
-   * checks some issues with reset and select.
+   * Do we get the correct category after switching categories? Also checks some issues with reset
+   * and select.
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testGetCategoryA() throws IOException {
-    AACMappings mappings = 
-        new AACMappings(configFile("one uno\ntwo dos\nthree tres"));
+    AACMappings mappings = new AACMappings(configFile("one uno\ntwo dos\nthree tres"));
     assertEquals("", mappings.select("one"), "selecting one");
     assertEquals("uno", mappings.getCategory(), "selected one");
 
@@ -191,11 +181,10 @@ public class TestAACMappings {
   } // testGetCategoryA()
 
   /**
-   * Do we get the correct category after switching categories? Also
-   * checks some issues with reset and select.
+   * Do we get the correct category after switching categories? Also checks some issues with reset
+   * and select.
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testGetCategoryB() throws IOException {
@@ -213,11 +202,9 @@ public class TestAACMappings {
   } // testGetCategoryB()
 
   /**
-   * Do we get the appropriate list of image locations with no
-   * top-level categories?
+   * Do we get the appropriate list of image locations with no top-level categories?
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testImageLocsEmpty() throws IOException {
@@ -227,57 +214,43 @@ public class TestAACMappings {
   } // testImageLocsEmpty()
 
   /**
-   * Do we get the appropriate list of image locations with only
-   * top-level categories?
+   * Do we get the appropriate list of image locations with only top-level categories?
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testImageLocsTopLevel() throws IOException {
-    AACMappings mappings = 
-        new AACMappings(configFile("uno one\ndos two\ntres three\n"));
+    AACMappings mappings = new AACMappings(configFile("uno one\ndos two\ntres three\n"));
 
     String[] categories = mappings.getImageLocs();
     assertEquals(3, categories.length, "three top-level categories");
-    assertTrue(containsString(categories, "uno"), 
-        "the first top-level category");
-    assertTrue(containsString(categories, "dos"), 
-        "the second top-level category");
-    assertTrue(containsString(categories, "tres"), 
-        "the third top-level category");
+    assertTrue(containsString(categories, "uno"), "the first top-level category");
+    assertTrue(containsString(categories, "dos"), "the second top-level category");
+    assertTrue(containsString(categories, "tres"), "the third top-level category");
 
     assertEquals("", mappings.select("uno"), "selecting uno");
-    assertArrayEquals(new String[] {}, mappings.getImageLocs(),
-        "nothing in category uno");
+    assertArrayEquals(new String[] {}, mappings.getImageLocs(), "nothing in category uno");
 
     mappings.reset();
     assertEquals("", mappings.select("dos"), "selecting dos");
-    assertArrayEquals(new String[] {}, mappings.getImageLocs(), 
-        "nothing in category dos");
+    assertArrayEquals(new String[] {}, mappings.getImageLocs(), "nothing in category dos");
 
     mappings.reset();
     assertEquals("", mappings.select("tres"), "selecting tres");
-    assertArrayEquals(new String[] {}, mappings.getImageLocs(),
-        "nothing in category tres");
+    assertArrayEquals(new String[] {}, mappings.getImageLocs(), "nothing in category tres");
 
     mappings.reset();
     categories = mappings.getImageLocs();
     assertEquals(3, categories.length, "still three top-level categories");
-    assertTrue(containsString(categories, "uno"), 
-        "the first top-level category");
-    assertTrue(containsString(categories, "dos"), 
-        "the second top-level category");
-    assertTrue(containsString(categories, "tres"), 
-        "the third top-level category");
+    assertTrue(containsString(categories, "uno"), "the first top-level category");
+    assertTrue(containsString(categories, "dos"), "the second top-level category");
+    assertTrue(containsString(categories, "tres"), "the third top-level category");
   } // testImageLocsTopLevel()
 
   /**
-   * Do we get the appropriate list of image locations with only
-   * top-level categories?
+   * Do we get the appropriate list of image locations with only top-level categories?
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testImageLocsNested() throws IOException {
@@ -323,8 +296,7 @@ public class TestAACMappings {
   /**
    * Test select in a fairly common situation.
    * 
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testSelectStandard() throws IOException {
@@ -338,8 +310,7 @@ public class TestAACMappings {
     mappings.reset();
     assertEquals("", mappings.select("two"), "two is a category");
     assertEquals("dress", mappings.select("d"), "d is for dress");
-    assertEquals("extra ear rings", mappings.select("e"), 
-        "e is for extra ear rings");
+    assertEquals("extra ear rings", mappings.select("e"), "e is for extra ear rings");
     assertEquals("fitted shirt", mappings.select("f"), "f is for fitted shitt");
     assertEquals("gloves", mappings.select("g"), "g is for gloves");
 
@@ -352,8 +323,7 @@ public class TestAACMappings {
   /**
    * Test select in some situation in which it should throw exceptions.
    * 
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testSelectExceptional() throws IOException {
@@ -420,8 +390,7 @@ public class TestAACMappings {
   /**
    * Test adding new values to the empty state.
    *
-   * @throws IOException
-   *   If an IO operation fails.
+   * @throws IOException If an IO operation fails.
    */
   @Test
   public void testAdd() throws IOException {

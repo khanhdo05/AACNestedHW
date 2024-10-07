@@ -152,7 +152,8 @@ public class AssociativeArray<K, V> {
       } // if
     } // for
 
-    throw new KeyNotFoundException("Key: " + key.toString() + " does not appear in the associative array.");
+    throw new KeyNotFoundException(
+        "Key: " + key.toString() + " does not appear in the associative array.");
   } // get(K)
 
   /**
@@ -210,13 +211,17 @@ public class AssociativeArray<K, V> {
    * 
    * @return an array of all the keys in the associative array.
    */
+  @SuppressWarnings("unchecked")
   public K[] keys() {
-    @SuppressWarnings("unchecked")
-    K[] keys = (K[]) newInstance(this.pairs[0].key.getClass(), this.size);
-    for (int i = 0; i < this.size; i++) {
-      keys[i] = this.pairs[i].key;
-    } // for
-    return keys;
+    try {
+      K[] keys = (K[]) newInstance(this.pairs[0].key.getClass(), this.size);
+      for (int i = 0; i < this.size; i++) {
+        keys[i] = this.pairs[i].key;
+      } // for
+      return keys;
+    } catch (Exception e) {
+      return (K[]) new String[0];
+    } // try/catch
   } // keys()
 
   // +-----------------+---------------------------------------------

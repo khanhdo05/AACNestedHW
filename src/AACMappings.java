@@ -20,6 +20,7 @@ public class AACMappings implements AACPage {
 	private final String defaultCategory = "img/home.png";
 	private String currentCategory = defaultCategory;
 	private final AssociativeArray<String, AACCategory> categories;
+	private final AssociativeArray<String, String> filesToNames;
 
 	/**
 	 * Creates a set of mappings for the AAC based on the provided file. The file is read in to create
@@ -38,36 +39,39 @@ public class AACMappings implements AACPage {
 	 */
 	public AACMappings(String filename) {
 		this.categories = new AssociativeArray<>();
+		this.filesToNames = new AssociativeArray<>();
 		this.loadfile(filename);
 	} // AACMappings(String)
 
+	/**
+	 * Loads the file and creates the categories and items based on the information in the file
+	 *
+	 * @param filename the name of the file that stores the mapping information
+	 */
 	private void loadfile(String filename) {
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				System.out.println(line);
 				String[] args = line.split(" ");
-				if (!line.startsWith(">")) {
-					this.currentCategory = defaultCategory;
-				} else {
-					args[0] = args[0].substring(1);
-				} // if/else
-
 				// Making sure text is one string
 				if (args.length > 2) {
 					for (int i = 2; i < args.length; i++) {
 						args[1] += " " + args[i];
 					} // for
 				} // if
-				System.out.println(
-						"ARGS: " + args[0] + "; " + args[1] + "current category: " + this.currentCategory);
+				if (!line.startsWith(">")) {
+					this.currentCategory = defaultCategory;
+					this.filesToNames.set(args[0], args[1]);
+				} else {
+					args[0] = args[0].substring(1);
+				} // if/else
 				this.addItem(args[0], args[1]);
 			} // while
 		} catch (Exception e) {
 			// Do nothing?
 		} // try/catch
 		reset();
-	}
+	} // loadfile(String)
 
 	/**
 	 * Given the image location selected, it determines the action to be taken. This can be updating
@@ -183,13 +187,11 @@ public class AACMappings implements AACPage {
 				this.currentCategory = imageLoc;
 			} else {
 				// If we're in a category, add the imageLoc and text to the current category
-				System.out.println("Current category: " + this.currentCategory + " and have: "
-						+ this.categories.hasKey(this.currentCategory));
 				AACCategory category = this.categories.get(this.currentCategory);
 				category.addItem(imageLoc, text);
 			} // if/else
 		} catch (NullKeyException | KeyNotFoundException e) {
-			System.out.println("Error adding item: " + e.getMessage() + " " + imageLoc + " " + text);
+			// Do nothing
 		} // try/catch
 	} // addItem(String, String)
 
@@ -200,10 +202,11 @@ public class AACMappings implements AACPage {
 	 */
 	@Override
 	public String getCategory() {
-		if (this.currentCategory.equals(this.defaultCategory)) {
+		try {
+			return this.filesToNames.get(this.currentCategory);
+		} catch (KeyNotFoundException e) {
 			return "";
-		} // if
-		return this.currentCategory;
+		} // try/catch
 	} // getCategory()
 
 
