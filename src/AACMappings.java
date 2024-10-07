@@ -45,18 +45,28 @@ public class AACMappings implements AACPage {
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			String line;
 			while ((line = br.readLine()) != null) {
+				System.out.println(line);
 				String[] args = line.split(" ");
-				if (line.startsWith(">")) {
+				if (!line.startsWith(">")) {
 					this.currentCategory = defaultCategory;
 				} else {
 					args[0] = args[0].substring(1);
-					this.currentCategory = args[0];
 				} // if/else
+
+				// Making sure text is one string
+				if (args.length > 2) {
+					for (int i = 2; i < args.length; i++) {
+						args[1] += " " + args[i];
+					} // for
+				} // if
+				System.out.println(
+						"ARGS: " + args[0] + "; " + args[1] + "current category: " + this.currentCategory);
 				this.addItem(args[0], args[1]);
 			} // while
 		} catch (Exception e) {
 			// Do nothing?
 		} // try/catch
+		reset();
 	}
 
 	/**
@@ -102,6 +112,9 @@ public class AACMappings implements AACPage {
 	@Override
 	public String[] getImageLocs() {
 		try {
+			if (this.currentCategory.equals(this.defaultCategory)) {
+				return this.categories.keys();
+			} // if
 			return (this.categories.get(this.currentCategory)).getImageLocs();
 		} catch (KeyNotFoundException e) {
 			// If there's no current category, also return an empty array
@@ -167,13 +180,16 @@ public class AACMappings implements AACPage {
 			// If the we're on the homescreen, create a new category with given imageLoc and name text
 			if (this.currentCategory.equals(this.defaultCategory)) {
 				this.categories.set(imageLoc, new AACCategory(text));
+				this.currentCategory = imageLoc;
 			} else {
 				// If we're in a category, add the imageLoc and text to the current category
+				System.out.println("Current category: " + this.currentCategory + " and have: "
+						+ this.categories.hasKey(this.currentCategory));
 				AACCategory category = this.categories.get(this.currentCategory);
 				category.addItem(imageLoc, text);
 			} // if/else
 		} catch (NullKeyException | KeyNotFoundException e) {
-			// Do nothing
+			System.out.println("Error adding item: " + e.getMessage() + " " + imageLoc + " " + text);
 		} // try/catch
 	} // addItem(String, String)
 
@@ -201,6 +217,9 @@ public class AACMappings implements AACPage {
 	@Override
 	public boolean hasImage(String imageLoc) {
 		try {
+			if (this.currentCategory.equals(this.defaultCategory)) {
+				return this.categories.hasKey(imageLoc);
+			} // if
 			return (this.categories.get(this.currentCategory)).hasImage(imageLoc);
 		} catch (KeyNotFoundException e) {
 			// If there's no current category, return false

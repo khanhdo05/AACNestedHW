@@ -53,7 +53,11 @@ public class AACCategory implements AACPage {
 	 */
 	@Override
 	public String[] getImageLocs() {
-		return this.items.keys();
+		try {
+			return this.items.keys();
+		} catch (Exception e) {
+			return new String[0];
+		}
 	} // getImageLocs()
 
 	/**

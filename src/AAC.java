@@ -1,3 +1,4 @@
+import edu.grinnell.csc207.util.NullKeyException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -24,33 +25,30 @@ import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerModeDesc;
 
 /**
- * Creates a GUI that has a grid of images that represent the communication
- * device of the AAC.
+ * Creates a GUI that has a grid of images that represent the communication device of the AAC.
  * 
  * @author Catie Baker
  *
  */
 public class AAC implements ActionListener {
 
-	private JFrame frame;
+	private final JFrame frame;
 	private static Synthesizer synthesizer;
 	private int startIndex;
 	private int endIndex;
 	private static final int NUM_ACROSS = 3;
 	private static final int NUM_DOWN = 3;
 	private String[] images;
-	private AACPage page;
-	private Scanner input;
+	private final AACPage page;
+	private final Scanner input;
 
 	/**
 	 * Creates the AAC display for the file provided
 	 * 
-	 * @param filename the name of the file that contains the images and text that
-	 *                 will be in the AAC
+	 * @param filename the name of the file that contains the images and text that will be in the AAC
 	 */
 	public AAC(String filename) {
-		this.page = new AACCategory("test");
-		// this.page = new AACMappings(filename);
+		this.page = new AACMappings(filename);
 		this.images = this.page.getImageLocs();
 		this.startIndex = 0;
 		this.endIndex = Math.min(NUM_ACROSS * NUM_DOWN, this.images.length);
@@ -66,7 +64,7 @@ public class AAC implements ActionListener {
 	/**
 	 * Loads the images in the screen in a width by length grid
 	 * 
-	 * @param width  the number of images across to display
+	 * @param width the number of images across to display
 	 * @param length the number of images down to display
 	 */
 	public void loadImages(int width, int length) {
@@ -128,7 +126,6 @@ public class AAC implements ActionListener {
 					button.addActionListener(this);
 					panel.add(button);
 					currImage++;
-
 				}
 			}
 		}
@@ -152,7 +149,8 @@ public class AAC implements ActionListener {
 
 		try {
 			// Set property as Kevin Dictionary
-			System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us" + ".cmu_us_kal.KevinVoiceDirectory");
+			System.setProperty("freetts.voices",
+					"com.sun.speech.freetts.en.us" + ".cmu_us_kal.KevinVoiceDirectory");
 
 			// Register Engine
 			Central.registerEngineCentral("com.sun.speech.freetts" + ".jsapi.FreeTTSEngineCentral");
@@ -165,16 +163,16 @@ public class AAC implements ActionListener {
 			synthesizer.resume();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println("Error creating synthesizer");
 		}
 		AAC aac = new AAC("AACMappings.txt");
 	}
 
 	/**
-	 * Responds to the click of a button. If the button is a category or action
-	 * (e.g. home, next), it updates the screen. If the button is an image within
-	 * the category, it speaks aloud the text
+	 * Responds to the click of a button. If the button is a category or action (e.g. home, next), it
+	 * updates the screen. If the button is an image within the category, it speaks aloud the text
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 		if (actionCommand.equals("back")) {
@@ -197,7 +195,11 @@ public class AAC implements ActionListener {
 				String result = (String) JOptionPane.showInputDialog(frame, "What is the text?", "AAC Add",
 						JOptionPane.PLAIN_MESSAGE, null, null, "");
 				if (result != null && result.length() > 0) {
-					this.page.addItem(imageLoc, result);
+					try {
+						this.page.addItem(imageLoc, result);
+					} catch (NullKeyException eAddItem) {
+						System.err.println("Error adding item");
+					}
 				}
 			}
 			this.images = this.page.getImageLocs();
@@ -220,12 +222,10 @@ public class AAC implements ActionListener {
 					synthesizer.speakPlainText(toSpeak, null);
 					synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
 				} catch (Exception e1) {
-					e1.printStackTrace();
+					System.err.println("Error speaking");
 				}
 			}
 		}
 		loadImages(NUM_ACROSS, NUM_DOWN);
-
 	}
-
 }

@@ -152,7 +152,7 @@ public class AssociativeArray<K, V> {
       } // if
     } // for
 
-    throw new KeyNotFoundException();
+    throw new KeyNotFoundException("Key: " + key.toString() + " does not appear in the associative array.");
   } // get(K)
 
   /**
