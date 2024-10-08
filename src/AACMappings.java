@@ -50,6 +50,7 @@ public class AACMappings implements AACPage {
 	 */
 	private void loadfile(String filename) {
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+			String prevDir = "";
 			String line;
 			while ((line = br.readLine()) != null) {
 				String[] args = line.split(" ");
@@ -61,9 +62,10 @@ public class AACMappings implements AACPage {
 				} // if
 				if (!line.startsWith(">")) {
 					this.currentCategory = defaultCategory;
-					this.filesToNames.set(args[0], args[1]);
+					prevDir = args[0];
 				} else {
 					args[0] = args[0].substring(1);
+					this.currentCategory = prevDir;
 				} // if/else
 				this.addItem(args[0], args[1]);
 			} // while
@@ -184,7 +186,7 @@ public class AACMappings implements AACPage {
 			// If the we're on the homescreen, create a new category with given imageLoc and name text
 			if (this.currentCategory.equals(this.defaultCategory)) {
 				this.categories.set(imageLoc, new AACCategory(text));
-				this.currentCategory = imageLoc;
+				this.filesToNames.set(imageLoc, text);
 			} else {
 				// If we're in a category, add the imageLoc and text to the current category
 				AACCategory category = this.categories.get(this.currentCategory);
