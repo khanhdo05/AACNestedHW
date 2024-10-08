@@ -9,3 +9,5 @@
 
 1. **Make sure that the text to speech library, FreeTTS**
    By running the `TextSpeech` Driver Class.
+
+2. **Run the AAC class**
